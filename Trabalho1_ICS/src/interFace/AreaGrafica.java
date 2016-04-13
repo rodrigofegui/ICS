@@ -5,6 +5,7 @@ package interFace;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -16,22 +17,28 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
+import javax.swing.JSlider;
 import javax.swing.JTextArea;
+import javax.swing.SwingConstants;
 import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
-public class AreaGrafica implements ActionListener{
+public class AreaGrafica implements ActionListener, ChangeListener{
 	JPanel painelPrincipal;
 	JPanel painelProgresso;
 	JPanel painelBotoes;
 	TitledBorder tituloCaixaArquivo;
 	ImageIcon icone;
-	static JTextArea textoNomeArquivo;
-	static JProgressBar barraDeProgresso;
-	static JTextArea textoBarraDeProgresso;
-	static JButton botaoTocar, botaoPausar, botaoParar;
-	static JButton botaoAumentar, botaoDiminuir;
+	final static int volumeInicial = 64;
+	static JTextArea textoNomeArquivo = null;
+	static JProgressBar barraDeProgresso = null;
+	static JTextArea textoBarraDeProgresso = null;
+	static JButton botaoTocar = null, botaoPausar = null, botaoParar = null, botaoVolume = null;
+	static JButton textoVolume = null;
+	static JSlider controleVolume = null;
 	
 	public JPanel criarPlanoDeConteudo() {
 		/*	Preparação para o incremento das informações gráficas */
@@ -95,6 +102,8 @@ public class AreaGrafica implements ActionListener{
 	
 	private void addBarraProgresso() {
 		barraDeProgresso = new JProgressBar(0, 100);
+		barraDeProgresso.setPreferredSize(new Dimension(400,10));
+		barraDeProgresso.setFocusable(false);
 		barraDeProgresso.setStringPainted(false);
 		
 		textoBarraDeProgresso = new JTextArea ();
@@ -107,106 +116,31 @@ public class AreaGrafica implements ActionListener{
 	}
 	
 	private void preparaPainelBotes() {
-		painelBotoes = new JPanel(new GridLayout());
-		Border caixaPrincipal = BorderFactory.createEmptyBorder(0,1,1,1);
+		painelBotoes = new JPanel (new FlowLayout());
+		Border caixaPrincipal = BorderFactory.createEmptyBorder(1,1,1,1);
 		
 		painelBotoes.setBorder(caixaPrincipal);
-		painelBotoes.setBackground(new Color(130, 235, 235));
-		painelBotoes.setMaximumSize(new Dimension(550, 40));
+		painelBotoes.setBackground(new Color(235, 235, 235));
+		painelBotoes.setMaximumSize(new Dimension(550, 55));
 		painelPrincipal.add(painelBotoes);        
 	}
 	
 	private void addBotoes(){
-		/*	Aquisição do icone */
-		icone = criarIcone("src/interFace/Icones/tocar.png");
-		/*	Criando Botão de Tocar */
-		botaoTocar = new JButton(icone);
-		/*	Tirar borda */
-		botaoTocar.setBorderPainted(false);
-		/*	Tirar area pintada */
-		botaoTocar.setContentAreaFilled(false);
-		/*	Tirar destaque ao clicar */
-		//botaoTocar.setFocusPainted(false);
-		/*	Identificação da Ação a ser tomada */
-        botaoTocar.setActionCommand("tocar");
-        /*	Adicionando Ação ao botao */
-		botaoTocar.addActionListener(this);
-		/*	Adicionando ao painel */
-		painelBotoes.add(botaoTocar);
+		botaoTocar = criarBotao ("tocar", true, false);
 		
-		/*	Aquisição do icone */
-		icone = criarIcone("src/interFace/Icones/pausar.png");
-		/*	Criando Botão de Tocar */
-		botaoPausar = new JButton(icone);
-		/*	Tirar borda */
-		botaoPausar.setBorderPainted(false);
-		/*	Tirar area pintada */
-		botaoPausar.setContentAreaFilled(false);
-		/*	Tirar destaque ao clicar */
-		//botaoPausar.setFocusPainted(false);
-		/*	Identificação da Ação a ser tomada */
-        botaoPausar.setActionCommand("pausar");
-        /*	Adicionando Ação ao botao */
-		botaoPausar.addActionListener(this);
-		/*	Desativado */
-		botaoPausar.setEnabled(false);
-		/*	Adicionando ao painel */
-		painelBotoes.add(botaoPausar);
+		botaoPausar = criarBotao ("pausar", true, false);
 		
-		/*	Aquisição do icone */
-		icone = criarIcone("src/interFace/Icones/parar.png");
-		/*	Criando Botão de Tocar */
-		botaoParar = new JButton(icone);
-		/*	Tirar borda */
-		botaoParar.setBorderPainted(false);
-		/*	Tirar area pintada */
-		botaoParar.setContentAreaFilled(false);
-		/*	Tirar destaque ao clicar */
-		//botaoParar.setFocusPainted(false);
-		/*	Identificação da Ação a ser tomada */
-        botaoParar.setActionCommand("parar");
-        /*	Adicionando Ação ao botao */
-		botaoParar.addActionListener(this);
-		/*	Desativado */
-		botaoParar.setEnabled(false);
-		/*	Adicionando ao painel */
-		painelBotoes.add(botaoParar);
+		botaoParar = criarBotao ("parar", true, false);
 		
-		addEspacoVazio (2);
+		addEspacoVazio (115);
 		
-		/*	Aquisição do icone */
-		icone = criarIcone("src/interFace/Icones/aumentar.png");
-		/*	Criando Botão de Tocar */
-		botaoAumentar = new JButton(icone);
-		/*	Tirar borda */
-		botaoAumentar.setBorderPainted(false);
-		/*	Tirar area pintada */
-		botaoAumentar.setContentAreaFilled(false);
-		/*	Tirar destaque ao clicar */
-		//botaoAumentar.setFocusPainted(false);
-		/*	Identificação da Ação a ser tomada */
-		botaoAumentar.setActionCommand("aumentar");
-        /*	Adicionando Ação ao botao */
-		botaoAumentar.addActionListener(this);
-		/*	Adicionando ao painel */
-		painelBotoes.add(botaoAumentar);
+		botaoVolume = criarVolume ("volume_médio");
 		
-		addEspacoVazio (1);
+		controleVolume = sliderVolume (0, 127, volumeInicial);
 		
-		/*	Aquisição do icone */
-		icone = criarIcone("src/interFace/Icones/diminuir.png");
-		/*	Criando Botão de Tocar */
-		botaoDiminuir = new JButton(icone);
-		/*	Tirar borda */
-		botaoDiminuir.setBorderPainted(false);
-		/*	Tirar area pintada */
-		botaoDiminuir.setContentAreaFilled(false);
-		/*	Tirar destaque ao clicar */
-		//botaoDiminuir.setFocusPainted(false);
-		/*	Identificação da Ação a ser tomada */
-		botaoDiminuir.setActionCommand("diminuir");
-		/*	Adicionando ao painel */
-		painelBotoes.add(botaoDiminuir);
+		textoVolume = criarTextoVolume ();
+		
+		Comandos.controleVolume();
 	}
 
 	void addCompABorda(Border borda, String descricao, Container destino){
@@ -226,23 +160,135 @@ public class AreaGrafica implements ActionListener{
         destino.add(caixa);
     }
 	
-	private void addEspacoVazio(int qnt) {
-		for (int vz = 0; vz < qnt; vz++)
-			painelBotoes.add(Box.createRigidArea(new Dimension(0, 10)));
+	private void addEspacoVazio(int largura) {
+		painelBotoes.add(Box.createRigidArea(new Dimension(largura, 50)));
 	}
-	
+		
 	protected ImageIcon criarIcone (String diretorio){
         ImageIcon imagem = new ImageIcon (diretorio);
         return imagem;
     }
 	
-	public void actionPerformed(ActionEvent evento) {
-		if ("tocar".equals(evento.getActionCommand())){
-			Comandos.tocarMusica();
-		}else if ("pausar".equals(evento.getActionCommand())){
-			Comandos.pausarMusica();
-		}else if ("parar".equals(evento.getActionCommand())){
-			Comandos.pararMusica();
+	private JButton criarBotao (String descricao, boolean acao, boolean ativacao){
+		String nomeIcone = "Icones/" + descricao + ".png";
+		
+		/*	Aquisição do icone */
+		icone = criarIcone(nomeIcone);
+		/*	Criando Botão de Tocar */
+		JButton novo = new JButton(icone);
+		/*	Redimensioar botão */
+		novo.setPreferredSize(new Dimension(32, 32));
+		/*	Tirar borda */
+		novo.setBorderPainted(false);
+		/*	Tirar area pintada */
+		novo.setContentAreaFilled(false);
+		/*	Tirar destaque ao clicar */
+		//novo.setFocusPainted(false);
+		
+		if (acao){
+			/*	Identificação da Ação a ser tomada */
+	        novo.setActionCommand(descricao);
+	        /*	Adicionando Ação ao botao */
+			novo.addActionListener(this);
 		}
+		
+		/*	Desativado */
+		novo.setEnabled(ativacao);
+		/*	Adicionando ao painel */
+		painelBotoes.add(novo);
+		
+		return novo;
 	}
+	
+	private JButton criarVolume (String descricao){
+		String nomeIcone = "Icones/" + descricao + ".png";
+		
+		/*	Aquisição do icone */
+		icone = criarIcone(nomeIcone);
+		/*	Criando Botão de Tocar */
+		JButton novo = new JButton(icone);
+		/*	Redimensioar botão */
+		novo.setPreferredSize(new Dimension(32, 32));
+		/*	Tirar borda */
+		novo.setBorderPainted(false);
+		/*	Tirar area pintada */
+		novo.setContentAreaFilled(false);
+		/*	Tirar destaque ao clicar */
+		//novo.setFocusPainted(false);
+		/*	Adicionando ao painel */
+		painelBotoes.add(novo);
+		
+		return novo;
+	}
+	
+	private JSlider sliderVolume (int min, int max, int inicio){
+		/*	Criando Controle de volume por Slider */
+		JSlider novo = new JSlider(JSlider.HORIZONTAL, min, max, inicio);
+		/*	Configurando o tamanho */
+		novo.setSize(new Dimension(110, 45));
+		/*	Configurando Traços de intervalos menores */
+		novo.setMinorTickSpacing(21);
+		/*	Configurando Traços de intervalos maiores */
+		novo.setMajorTickSpacing(42);
+		/*	Marcando os traços */
+		novo.setPaintTicks(true);
+		/*	Mostrando Identificações */
+		novo.setPaintLabels(true);
+		/*	Criando Identificações */
+		novo.setLabelTable(novo.createStandardLabels(42));
+		/*	Adicionando ação */
+		novo.addChangeListener(this);
+		/*	Adicionando ao painel */
+		painelBotoes.add(novo);
+		
+		return novo;
+	}
+	
+	private JButton criarTextoVolume (){
+		JButton nova = new JButton();
+		
+		/*	Redimensioar area do texto */
+		nova.setPreferredSize (new Dimension(25, 45));
+		/*	Tirar borda */
+		nova.setBorderPainted(false);
+		/*	Tirar area pintada */
+		nova.setContentAreaFilled(false);
+		/*	Configuração do alinhamento do texto */
+		nova.setHorizontalAlignment(SwingConstants.LEFT);
+		/*	Configuração do tamanho da fonte */
+		nova.setFont(nova.getFont().deriveFont(10));
+		/*	Retirando borda interna */
+		nova.setBorder (null);
+		/*	Adicionando ao painel */
+		painelBotoes.add(nova);
+		
+		return nova;
+	}
+	
+	public void actionPerformed(ActionEvent evento) {
+		if ("tocar".equals(evento.getActionCommand()))
+			Comandos.tocarMusica();
+		else if ("pausar".equals(evento.getActionCommand()))
+			Comandos.pausarMusica();
+		else if ("parar".equals(evento.getActionCommand()))
+			Comandos.pararMusica();
+	}
+	
+	public void stateChanged(ChangeEvent event){
+		int atual = controleVolume.getValue();
+		
+		if (atual == 0)
+			icone = criarIcone("Icones/volume_mudo.png");
+		else if (atual < 42)
+			icone = criarIcone("Icones/volume_baixo.png");
+		else if (atual < 84)
+			icone = criarIcone("Icones/volume_médio.png");
+		else
+			icone = criarIcone("Icones/volume_alto.png");
+		
+		/*	Configurando o ícone do botão */
+		botaoVolume.setIcon(icone);
+		
+		Comandos.controleVolume();
+    }
 }
