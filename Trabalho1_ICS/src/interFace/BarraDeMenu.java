@@ -54,8 +54,16 @@ public class BarraDeMenu implements ActionListener{
         menu.add(itensMenu);
         
         /*	Separador de conteúdo */
-        //menu.addSeparator();
-        //itensMenu = new JMenuItem ("Fechar");
+        menu.addSeparator();
+        itensMenu = new JMenuItem ("Fechar");
+        /*	Estabelecendo atalho para este item: 'Ctrl + O' */
+        itensMenu.setAccelerator (KeyStroke.getKeyStroke(KeyEvent.VK_X, ActionEvent.CTRL_MASK));
+        /*	Identificação da Ação a ser tomada */
+        itensMenu.setActionCommand("fechar");
+        /*	Adicionando Ação ao item */
+        itensMenu.addActionListener(this);
+        /*	Adicionando ao menu */
+        menu.add(itensMenu);
 	}
 	
 	private void addMenuFerramenta() {
@@ -124,13 +132,33 @@ public class BarraDeMenu implements ActionListener{
 	}
 	
 	private void addMenuAjuda() {
-		
+		/*	Criação do Menu */
+		menu = new JMenu("Ajuda");
+		/*	Estabelecendo atalho para o menu: 'Alt + F' */
+        menu.setMnemonic(KeyEvent.VK_H);
+        /*	Descrição ao permanecer com o mouse */
+        menu.setToolTipText("Manipulação do áudio");
+        /*	Adicionando menu à barra de menu */
+        barraDeMenu.add(menu);
+        
+        /*	Criando novo item */
+        itensMenu = new JMenuItem ("Sobre");
+        /*	Estabelecendo atalho para este item: 'Ctrl + Espaço' */
+        //itensMenu.setAccelerator (KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, ActionEvent.CTRL_MASK));
+        /*	Identificação da Ação a ser tomada */
+        itensMenu.setActionCommand("sobre");
+        /*	Adicionando Ação ao item */
+        itensMenu.addActionListener(this);
+        /*	Adicionando ao menu */
+        menu.add(itensMenu);
 	}
 	
 	public void actionPerformed(ActionEvent evento) {
 		/*	Seleção de Comando */
 		if ("abrir".equals(evento.getActionCommand())){
 			Comandos.abrirArquivo();
+		}else if ("fechar".equals(evento.getActionCommand())){
+			Comandos.fecharAplicacao();
 		}else if ("tocar".equals(evento.getActionCommand())){
 			Comandos.tocarMusica();
 		}else if ("pausar".equals(evento.getActionCommand()))
@@ -138,8 +166,10 @@ public class BarraDeMenu implements ActionListener{
 		else if ("parar".equals(evento.getActionCommand()))
 			Comandos.pararMusica();
 		else if ("aumentar".equals(evento.getActionCommand()))
-			System.out.println("Aumentando...");
+			Comandos.aumentarVolume();
 		else if ("diminuir".equals(evento.getActionCommand()))
-			System.out.println("Diminuindo...");
+			Comandos.diminuirVolume();
+		else if ("sobre".equals(evento.getActionCommand()))
+			Comandos.sobreAplicacao();
 	}
 }
