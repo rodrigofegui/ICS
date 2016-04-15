@@ -30,18 +30,18 @@ public class AreaGrafica implements ActionListener, ChangeListener{
 	JPanel painelPrincipal;
 	JPanel painelProgresso;
 	JPanel painelBotoes;
-	TitledBorder tituloCaixaArquivo;
 	ImageIcon icone;
 	final static int volumeInicial = 64;
 	static JTextArea textoNomeArquivo = null;
 	static JProgressBar barraDeProgresso = null;
 	static JTextArea textoBarraDeProgresso = null;
-	static JButton botaoTocar = null, botaoPausar = null, botaoParar = null, botaoVolume = null;
+	static JButton botaoTocar = null, botaoPausar = null, botaoParar = null;
+	static JButton botaoVoltar = null, botaoAvancar = null, botaoVolume = null;
 	static JButton textoVolume = null;
 	static JSlider controleVolume = null;
 	
 	public JPanel criarPlanoDeConteudo() {
-		/*	Preparação para o incremento das informações gráficas */
+		/*	Preparaç\u00e3o para o incremento das informações gráficas */
 		preparaPainelPrincipal();
 		
 		/*	Adicionando nome do arquivo */
@@ -65,7 +65,7 @@ public class AreaGrafica implements ActionListener, ChangeListener{
 	private void preparaPainelPrincipal() {
 		/*	Criando o painel de conteúdo principal */
 		painelPrincipal = new JPanel ();
-		/*	Configuração do layout para "crescer" no eixo Y */
+		/*	Configuraç\u00e3o do layout para "crescer" no eixo Y */
         painelPrincipal.setLayout (new BoxLayout(painelPrincipal, BoxLayout.Y_AXIS));
         painelPrincipal.setOpaque (true);
         
@@ -78,7 +78,7 @@ public class AreaGrafica implements ActionListener, ChangeListener{
 		/*	Criando caixa em baixo relevo */
 		Border caixaArquivo = BorderFactory.createEtchedBorder(EtchedBorder.LOWERED);
 		/*	Criando título da caixa */
-        tituloCaixaArquivo = BorderFactory.createTitledBorder(caixaArquivo, "Nome do Arquivo:");
+		TitledBorder tituloCaixaArquivo = BorderFactory.createTitledBorder(caixaArquivo, "Nome do Arquivo:");
         /*	Adicionando a caixa com título */
         addCompABorda (tituloCaixaArquivo, "", painelPrincipal);
         
@@ -89,7 +89,7 @@ public class AreaGrafica implements ActionListener, ChangeListener{
 	private void preparaPainelProgresso(){
 		/*	Criando painel para a barra de progresso */
 		painelProgresso = new JPanel ();
-		/*	Configuração do layout para "crescer" no eixo Y */
+		/*	Configuraç\u00e3o do layout para "crescer" no eixo Y */
 		painelProgresso.setLayout(new BoxLayout(painelProgresso, BoxLayout.Y_AXIS));
 		painelProgresso.setOpaque (true);
 		
@@ -126,13 +126,18 @@ public class AreaGrafica implements ActionListener, ChangeListener{
 	}
 	
 	private void addBotoes(){
-		botaoTocar = criarBotao ("tocar", true, false);
+		botaoVoltar = criarBotao ("voltar", true, false);
 		
 		botaoPausar = criarBotao ("pausar", true, false);
+		botaoPausar.setVisible(false);
+
+		botaoTocar = criarBotao ("tocar", true, false);
 		
+		botaoAvancar = criarBotao ("avancar", true, false);
+
 		botaoParar = criarBotao ("parar", true, false);
 		
-		addEspacoVazio (115);
+		addEspacoVazio (90);
 		
 		botaoVolume = criarVolume ("volume_médio");
 		
@@ -142,12 +147,13 @@ public class AreaGrafica implements ActionListener, ChangeListener{
 		
 		Comandos.controleVolume();
 	}
-
+	
+	
 	void addCompABorda(Border borda, String descricao, Container destino){
         /*	Criando Caixa */
 		JPanel caixa = new JPanel (new GridLayout (1, 1), false);
        
-		/*	Configuração da área de texto */
+		/*	Configuraç\u00e3o da área de texto */
 		textoNomeArquivo = new JTextArea();
 		textoNomeArquivo.setBackground(new Color(235, 235, 235));
 		textoNomeArquivo.setText(descricao);
@@ -164,20 +170,28 @@ public class AreaGrafica implements ActionListener, ChangeListener{
 		painelBotoes.add(Box.createRigidArea(new Dimension(largura, 50)));
 	}
 		
-	protected ImageIcon criarIcone (String diretorio){
+	public static ImageIcon criarIcone (String diretorio){
         ImageIcon imagem = new ImageIcon (diretorio);
         return imagem;
     }
 	
+	
 	private JButton criarBotao (String descricao, boolean acao, boolean ativacao){
-		String nomeIcone = "Icones/" + descricao + ".png";
+		String nomeIcone;
+		if (Principal.EXECUTANDO_ECLIPSE)
+			nomeIcone = "Icones/" + descricao + ".png";
+		else
+			nomeIcone = "../Icones/" + descricao + ".png";
 		
-		/*	Aquisição do icone */
+		/*	Aquisiç\u00e3o do icone */
 		icone = criarIcone(nomeIcone);
-		/*	Criando Botão de Tocar */
+		/*	Criando Bot\u00e3o de Tocar */
 		JButton novo = new JButton(icone);
-		/*	Redimensioar botão */
-		novo.setPreferredSize(new Dimension(32, 32));
+		/*	Redimensioar bot\u00e3o */
+		if (descricao.equals("tocar") || descricao.equals("pausar"))
+			novo.setPreferredSize(new Dimension(43, 43));
+		else
+			novo.setPreferredSize(new Dimension(32, 32));
 		/*	Tirar borda */
 		novo.setBorderPainted(false);
 		/*	Tirar area pintada */
@@ -186,9 +200,9 @@ public class AreaGrafica implements ActionListener, ChangeListener{
 		//novo.setFocusPainted(false);
 		
 		if (acao){
-			/*	Identificação da Ação a ser tomada */
+			/*	Identificaç\u00e3o da Aç\u00e3o a ser tomada */
 	        novo.setActionCommand(descricao);
-	        /*	Adicionando Ação ao botao */
+	        /*	Adicionando Aç\u00e3o ao botao */
 			novo.addActionListener(this);
 		}
 		
@@ -201,13 +215,17 @@ public class AreaGrafica implements ActionListener, ChangeListener{
 	}
 	
 	private JButton criarVolume (String descricao){
-		String nomeIcone = "Icones/" + descricao + ".png";
+		String nomeIcone;
+		if (Principal.EXECUTANDO_ECLIPSE)
+			nomeIcone = "Icones/" + descricao + ".png";
+		else
+			nomeIcone = "../Icones/" + descricao + ".png";
 		
-		/*	Aquisição do icone */
+		/*	Aquisiç\u00e3o do icone */
 		icone = criarIcone(nomeIcone);
-		/*	Criando Botão de Tocar */
+		/*	Criando Bot\u00e3o de Tocar */
 		JButton novo = new JButton(icone);
-		/*	Redimensioar botão */
+		/*	Redimensioar bot\u00e3o */
 		novo.setPreferredSize(new Dimension(32, 32));
 		/*	Tirar borda */
 		novo.setBorderPainted(false);
@@ -236,7 +254,7 @@ public class AreaGrafica implements ActionListener, ChangeListener{
 		novo.setPaintLabels(true);
 		/*	Criando Identificações */
 		novo.setLabelTable(novo.createStandardLabels(42));
-		/*	Adicionando ação */
+		/*	Adicionando aç\u00e3o */
 		novo.addChangeListener(this);
 		/*	Adicionando ao painel */
 		painelBotoes.add(novo);
@@ -253,9 +271,9 @@ public class AreaGrafica implements ActionListener, ChangeListener{
 		nova.setBorderPainted(false);
 		/*	Tirar area pintada */
 		nova.setContentAreaFilled(false);
-		/*	Configuração do alinhamento do texto */
+		/*	Configuraç\u00e3o do alinhamento do texto */
 		nova.setHorizontalAlignment(SwingConstants.LEFT);
-		/*	Configuração do tamanho da fonte */
+		/*	Configuraç\u00e3o do tamanho da fonte */
 		nova.setFont(nova.getFont().deriveFont(10));
 		/*	Retirando borda interna */
 		nova.setBorder (null);
@@ -265,28 +283,40 @@ public class AreaGrafica implements ActionListener, ChangeListener{
 		return nova;
 	}
 	
-	public void actionPerformed(ActionEvent evento) {
+	public void actionPerformed(ActionEvent evento){
 		if ("tocar".equals(evento.getActionCommand()))
 			Comandos.tocarMusica();
 		else if ("pausar".equals(evento.getActionCommand()))
 			Comandos.pausarMusica();
 		else if ("parar".equals(evento.getActionCommand()))
 			Comandos.pararMusica();
+		else if ("voltar".equals(evento.getActionCommand()))
+			Comandos.voltarMusica();
+		else if ("avancar".equals(evento.getActionCommand()))
+			Comandos.avancarMusica();
 	}
 	
 	public void stateChanged(ChangeEvent event){
 		int atual = controleVolume.getValue();
+		String nomeIcone;
+		if (Principal.EXECUTANDO_ECLIPSE)
+			nomeIcone = "Icones/";
+		else
+			nomeIcone = "../Icones/";
 		
 		if (atual == 0)
-			icone = criarIcone("Icones/volume_mudo.png");
+			nomeIcone += "volume_mudo.png";			
 		else if (atual < 42)
-			icone = criarIcone("Icones/volume_baixo.png");
+			nomeIcone += "volume_baixo.png";
 		else if (atual < 84)
-			icone = criarIcone("Icones/volume_médio.png");
+			nomeIcone += "volume_médio.png";
 		else
-			icone = criarIcone("Icones/volume_alto.png");
+			nomeIcone += "volume_alto.png";
 		
-		/*	Configurando o ícone do botão */
+		/*	Abrindo o ícone */
+		icone = criarIcone(nomeIcone);
+		
+		/*	Configurando o ícone do bot\u00e3o */
 		botaoVolume.setIcon(icone);
 		
 		Comandos.controleVolume();
