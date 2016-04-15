@@ -38,7 +38,7 @@ public class BarraDeMenu implements ActionListener{
 		/*	Estabelecendo atalho para o menu: 'Alt + A' */
         menu.setMnemonic(KeyEvent.VK_A);
         /*	Descrição ao permanecer com o mouse */
-        menu.setToolTipText("Manipulação de arquivos");
+        menu.setToolTipText("Manipula\u00e7\u00e3o de arquivos");
         /*	Adicionando menu à barra de menu */
         barraDeMenu.add(menu);
         
@@ -55,8 +55,33 @@ public class BarraDeMenu implements ActionListener{
         
         /*	Separador de conteúdo */
         menu.addSeparator();
+        
+        itensMenu = new JMenuItem ("Conte\u00fado MIDI");
+        /*	Estabelecendo atalho para este item: 'Ctrl + D' */
+        itensMenu.setAccelerator (KeyStroke.getKeyStroke(KeyEvent.VK_D, ActionEvent.CTRL_MASK));
+        /*	Identificação da Ação a ser tomada */
+        itensMenu.setActionCommand("midi");
+        /*	Adicionando Ação ao item */
+        itensMenu.addActionListener(this);
+        /*	Adicionando ao menu */
+        menu.add(itensMenu);
+        
+        itensMenu = new JMenuItem ("Conte\u00fado Musical");
+        /*	Estabelecendo atalho para este item: 'Ctrl + M' */
+        itensMenu.setAccelerator (KeyStroke.getKeyStroke(KeyEvent.VK_M, ActionEvent.CTRL_MASK));
+        /*	Identificação da Ação a ser tomada */
+        itensMenu.setActionCommand("musical");
+        /*	Adicionando Ação ao item */
+        itensMenu.addActionListener(this);
+        /*	Adicionando ao menu */
+        menu.add(itensMenu);
+        
+        
+        /*	Separador de conteúdo */
+        menu.addSeparator();
+        
         itensMenu = new JMenuItem ("Fechar");
-        /*	Estabelecendo atalho para este item: 'Ctrl + O' */
+        /*	Estabelecendo atalho para este item: 'Ctrl + X' */
         itensMenu.setAccelerator (KeyStroke.getKeyStroke(KeyEvent.VK_X, ActionEvent.CTRL_MASK));
         /*	Identificação da Ação a ser tomada */
         itensMenu.setActionCommand("fechar");
@@ -72,7 +97,7 @@ public class BarraDeMenu implements ActionListener{
 		/*	Estabelecendo atalho para o menu: 'Alt + F' */
         menu.setMnemonic(KeyEvent.VK_F);
         /*	Descrição ao permanecer com o mouse */
-        menu.setToolTipText("Manipulação do áudio");
+        menu.setToolTipText("Manipula\u00e7\u00e3o do áudio");
         /*	Adicionando menu à barra de menu */
         barraDeMenu.add(menu);
         
@@ -111,6 +136,29 @@ public class BarraDeMenu implements ActionListener{
         menu.addSeparator();
         
         /*	Criando novo item */
+        itensMenu = new JMenuItem ("Voltar");
+        /*	Estabelecendo atalho para este item: 'Ctrl + [' */
+        itensMenu.setAccelerator (KeyStroke.getKeyStroke(KeyEvent.VK_COMMA, ActionEvent.CTRL_MASK));
+        /*	Identificação da Ação a ser tomada */
+        itensMenu.setActionCommand("voltar");
+        /*	Adicionando Ação ao item */
+        itensMenu.addActionListener(this);
+        menu.add(itensMenu);
+        
+        /*	Criando novo item */
+        itensMenu = new JMenuItem ("Avan\u00e7ar");
+        /*	Estabelecendo atalho para este item: 'Ctrl + ]' */
+        itensMenu.setAccelerator (KeyStroke.getKeyStroke(KeyEvent.VK_PERIOD, ActionEvent.CTRL_MASK));
+        /*	Identificação da Ação a ser tomada */
+        itensMenu.setActionCommand("avancar");
+        /*	Adicionando Ação ao item */
+        itensMenu.addActionListener(this);
+        menu.add(itensMenu);
+        
+        /*	Separador de itens */
+        menu.addSeparator();
+        
+        /*	Criando novo item */
         itensMenu = new JMenuItem ("Aumentar");
         /*	Estabelecendo atalho para este item: 'Ctrl + +' */
         itensMenu.setAccelerator (KeyStroke.getKeyStroke(KeyEvent.VK_ADD, ActionEvent.CTRL_MASK));
@@ -137,7 +185,7 @@ public class BarraDeMenu implements ActionListener{
 		/*	Estabelecendo atalho para o menu: 'Alt + F' */
         menu.setMnemonic(KeyEvent.VK_H);
         /*	Descrição ao permanecer com o mouse */
-        menu.setToolTipText("Manipulação do áudio");
+        menu.setToolTipText("Exposi\u00e7\u00e3o a cerca do trabalho");
         /*	Adicionando menu à barra de menu */
         barraDeMenu.add(menu);
         
@@ -155,16 +203,24 @@ public class BarraDeMenu implements ActionListener{
 	
 	public void actionPerformed(ActionEvent evento) {
 		/*	Seleção de Comando */
-		if ("abrir".equals(evento.getActionCommand())){
+		if ("abrir".equals(evento.getActionCommand()))
 			Comandos.abrirArquivo();
-		}else if ("fechar".equals(evento.getActionCommand())){
+		else if ("midi".equals(evento.getActionCommand()))
+			Comandos.conteudoMidi();
+		else if ("musical".equals(evento.getActionCommand()))
+			Comandos.conteudoMusical();
+		else if ("fechar".equals(evento.getActionCommand()))
 			Comandos.fecharAplicacao();
-		}else if ("tocar".equals(evento.getActionCommand())){
+		else if ("tocar".equals(evento.getActionCommand()))
 			Comandos.tocarMusica();
-		}else if ("pausar".equals(evento.getActionCommand()))
+		else if ("pausar".equals(evento.getActionCommand()))
 			Comandos.pausarMusica();
 		else if ("parar".equals(evento.getActionCommand()))
 			Comandos.pararMusica();
+		else if ("voltar".equals(evento.getActionCommand()))
+			Comandos.voltarMusica();
+		else if ("avancar".equals(evento.getActionCommand()))
+			Comandos.avancarMusica();
 		else if ("aumentar".equals(evento.getActionCommand()))
 			Comandos.aumentarVolume();
 		else if ("diminuir".equals(evento.getActionCommand()))
