@@ -3,6 +3,7 @@ package interFace;
 
 /*	Importando APIs necessárias */
 import java.awt.Dimension;
+
 import javax.swing.JFrame;
 
 public class Principal implements Runnable{
@@ -13,6 +14,7 @@ public class Principal implements Runnable{
 	static int inicioSequenciador = 0;
 	static boolean tocando = false;
 	final static boolean executar = true;
+	static boolean EXECUTANDO_ECLIPSE = true;
 
 	public static void main(String[] args){
 		Principal principal = new Principal();
@@ -24,7 +26,7 @@ public class Principal implements Runnable{
 	public Principal(){
 		System.gc();
 		/*	Criação da nova interface, com um título */
-		janelaPrincipal = new JFrame ("Tocador MIDI - H&R");
+		janelaPrincipal = new JFrame ("Tocador MIDI - H\u0026R");
 
 		/*	Adicionando componentes à janela */
 		janelaPrincipal.setJMenuBar(barraDeMenu.criarBarraDeMenu());
@@ -46,22 +48,16 @@ public class Principal implements Runnable{
 		while(executar){
 			if (tocando){
 					AreaGrafica.barraDeProgresso.setValue(inicioBarra);
-					retardo(1000);
+					Comandos.retardo(1000);
 					inicioBarra++;
 			}else{
-				try{ 
-					retardo(1000);                                          
+				try{
+					Comandos.retardo(1000);                                 
 				}catch(Exception e) {
 					System.out.println(e.getMessage());  
                 }
 			}    
 		}
 	}
-	
-	static void retardo (int miliseg)
-	{  
-            try{
-            	Thread.sleep(miliseg);
-            }catch (InterruptedException e) { }
-	}
+
 }
