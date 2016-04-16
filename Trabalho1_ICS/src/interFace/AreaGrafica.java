@@ -285,7 +285,7 @@ public class AreaGrafica implements ActionListener, ChangeListener{
 	
 	public void actionPerformed(ActionEvent evento){
 		if ("tocar".equals(evento.getActionCommand()))
-			Comandos.tocarMusica();
+			Comandos.tocarMusica(textoNomeArquivo.getText());
 		else if ("pausar".equals(evento.getActionCommand()))
 			Comandos.pausarMusica();
 		else if ("parar".equals(evento.getActionCommand()))
