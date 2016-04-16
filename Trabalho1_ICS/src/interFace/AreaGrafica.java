@@ -1,3 +1,4 @@
+
 /*	Pacote ao qual pertence */
 package interFace;
 
@@ -10,6 +11,7 @@ import java.awt.GridLayout;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
+import javax.sound.midi.MidiUnavailableException;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -32,6 +34,7 @@ public class AreaGrafica implements ActionListener, ChangeListener{
 	JPanel painelBotoes;
 	ImageIcon icone;
 	final static int volumeInicial = 64;
+	public static int posicaoBarraProgresso = 0;
 	static JTextArea textoNomeArquivo = null;
 	static JProgressBar barraDeProgresso = null;
 	static JTextArea textoBarraDeProgresso = null;
@@ -285,7 +288,11 @@ public class AreaGrafica implements ActionListener, ChangeListener{
 	
 	public void actionPerformed(ActionEvent evento){
 		if ("tocar".equals(evento.getActionCommand()))
-			Comandos.tocarMusica();
+			try {
+				Comandos.tocarMusica();
+			} catch (MidiUnavailableException e) {
+				e.printStackTrace();
+			}
 		else if ("pausar".equals(evento.getActionCommand()))
 			Comandos.pausarMusica();
 		else if ("parar".equals(evento.getActionCommand()))

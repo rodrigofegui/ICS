@@ -1,3 +1,4 @@
+
 /*	Pacote ao qual pertence */
 package interFace;
 
@@ -7,6 +8,7 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.io.File;
 
+import javax.sound.midi.MidiUnavailableException;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -20,25 +22,31 @@ import javax.swing.JTable;
 import javax.swing.JTextPane;
 import javax.swing.table.DefaultTableModel;
 
+import controladorMidi.ControladorMidi2;
+
 public class Comandos {
 	//private static final java.lang.String newline = "\n";
 	
-	public static void abrirArquivo (){
+	public static void abrirArquivo () throws MidiUnavailableException{
 		/*	Abrindo o selecionador de arquivos */
-		JFileChooser fc = new JFileChooser();
+		JFileChooser seletorArquivo = new JFileChooser();
 		
 		/*	Inicializando no diretório corrente */
-		fc.setCurrentDirectory (new File("."));
+		seletorArquivo.setCurrentDirectory (new File("."));
 		
 		/*	Habilitando o filtro de arquivos */
-		fc.addChoosableFileFilter(new FiltroMidi());
-		fc.setAcceptAllFileFilterUsed(true);
+		seletorArquivo.addChoosableFileFilter(new FiltroMidi());
+		seletorArquivo.setAcceptAllFileFilterUsed(true);
+		seletorArquivo.setFileFilter(new FiltroMidi());
 		
-        int returnVal = fc.showOpenDialog(null);
+        int returnVal = seletorArquivo.showOpenDialog(null);
 
         if (returnVal == JFileChooser.APPROVE_OPTION){
-            File file = fc.getSelectedFile();
-            AreaGrafica.textoNomeArquivo.setText(file.getName());
+            ControladorMidi2.arqMidi = seletorArquivo.getSelectedFile();
+            
+            AreaGrafica.textoNomeArquivo.setText(ControladorMidi2.arqMidi.getName());
+            
+            ControladorMidi2.iniciaSequenciador();
             AreaGrafica.botaoTocar.setEnabled(true);
             AreaGrafica.botaoVoltar.setEnabled(true);
             AreaGrafica.botaoAvancar.setEnabled(true);
@@ -156,15 +164,17 @@ public class Comandos {
 		System.exit(0);
 	}
 	
-	public static void tocarMusica (){
+	public static void tocarMusica () throws MidiUnavailableException{
 		Principal.tocando = true;
 		
-		AreaGrafica.textoBarraDeProgresso.setText("tocando a " + "hh:mm:ss" + " / " + "hh:mm:ss");
+		atualizarTempoProgresso();
 		AreaGrafica.botaoTocar.setEnabled(false);
 		AreaGrafica.botaoTocar.setVisible(false);
 		AreaGrafica.botaoPausar.setEnabled(true);
 		AreaGrafica.botaoPausar.setVisible(true);
 		AreaGrafica.botaoParar.setEnabled(true);
+		
+		ControladorMidi2.tocarMidi();
 		
 		//System.out.println("Tocando = " + Principal.tocando);
 	}
@@ -172,24 +182,28 @@ public class Comandos {
 	public static void pausarMusica (){
 		Principal.tocando = false;
 		
-		AreaGrafica.textoBarraDeProgresso.setText("pausou em " + "hh:mm:ss" + " / " + "hh:mm:ss");
+		atualizarTempoProgresso();
 		AreaGrafica.botaoTocar.setEnabled(true);
 		AreaGrafica.botaoTocar.setVisible(true);
 		AreaGrafica.botaoPausar.setEnabled(false);
 		AreaGrafica.botaoPausar.setVisible(false);
 		AreaGrafica.botaoParar.setEnabled(true);
-		//System.out.println("Tocando = " + Principal.tocando);
+		
+		ControladorMidi2.pausarMidi ();
 	}
 	
 	public static void pararMusica (){
 		Principal.tocando = false;
-		Principal.inicioBarra = 0;
+		AreaGrafica.posicaoBarraProgresso = 0;
 		
-		AreaGrafica.textoBarraDeProgresso.setText("parou a " + "hh:mm:ss" + " / " + "hh:mm:ss");
+		atualizarTempoProgresso();
 		AreaGrafica.botaoTocar.setEnabled(true);
+		AreaGrafica.botaoTocar.setVisible(true);
 		AreaGrafica.botaoPausar.setEnabled(false);
+		AreaGrafica.botaoPausar.setVisible(false);
 		AreaGrafica.botaoParar.setEnabled(false);
 		
+		ControladorMidi2.pararMidi();		
 		//System.out.println("Tocando = " + Principal.tocando);
 	}
 
@@ -201,8 +215,8 @@ public class Comandos {
 		if (atual < AreaGrafica.barraDeProgresso.getMinimum())
 			atual = AreaGrafica.barraDeProgresso.getMinimum();
 		
-		AreaGrafica.barraDeProgresso.setValue(atual);
-		Principal.inicioBarra = atual;
+		
+		confProgressos(atual);
 	}
 	
 	public static void avancarMusica(){
@@ -213,9 +227,7 @@ public class Comandos {
 		if (atual > AreaGrafica.barraDeProgresso.getMaximum())
 			atual = AreaGrafica.barraDeProgresso.getMaximum();
 		
-		AreaGrafica.barraDeProgresso.setValue(atual);
-		Principal.inicioBarra = atual;
-		
+		confProgressos(atual);
 	}
 	
 	public static void aumentarVolume() {
@@ -281,7 +293,33 @@ public class Comandos {
 		sobre.add(textoSobre);
 	}
 	
-	public static void retardo (int miliseg){  
+	public static void atualizarTempoProgresso (){
+		AreaGrafica.textoBarraDeProgresso.setText(textoProgresso());
+	}
+	
+	private static String textoProgresso (){
+		String texto = ControladorMidi2.textoTempoAtual() + " / " + ControladorMidi2.textoDuracao;
+		
+		return texto;
+	}
+	
+	public static int getPosicaoBarraProgresso (){
+		ControladorMidi2.posicaoSequenciador = ControladorMidi2.sequenciador.getMicrosecondPosition();
+		
+		return (int) ((ControladorMidi2.posicaoSequenciador * 100) / ControladorMidi2.duracao);
+	}
+	
+	public static int setPosicaoBarraProgresso (){
+		return (int) ((ControladorMidi2.duracao * AreaGrafica.posicaoBarraProgresso) / 100);
+	}
+	
+	private static void confProgressos (int atual) {
+		AreaGrafica.barraDeProgresso.setValue(atual);
+		AreaGrafica.posicaoBarraProgresso = atual;
+		ControladorMidi2.posicaoSequenciador = setPosicaoBarraProgresso();
+	}
+	
+  	public static void retardo (int miliseg){  
         try{
         	Thread.sleep(miliseg);
         }catch (InterruptedException e) { }

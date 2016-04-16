@@ -1,3 +1,4 @@
+
 /*	Pacote ao qual pertence */
 package interFace;
 
@@ -6,6 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 
+import javax.sound.midi.MidiUnavailableException;
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
@@ -204,7 +206,11 @@ public class BarraDeMenu implements ActionListener{
 	public void actionPerformed(ActionEvent evento) {
 		/*	Seleção de Comando */
 		if ("abrir".equals(evento.getActionCommand()))
-			Comandos.abrirArquivo();
+			try {
+				Comandos.abrirArquivo();
+			} catch (MidiUnavailableException e) {
+				e.printStackTrace();
+			}
 		else if ("midi".equals(evento.getActionCommand()))
 			Comandos.conteudoMidi();
 		else if ("musical".equals(evento.getActionCommand()))
@@ -212,7 +218,11 @@ public class BarraDeMenu implements ActionListener{
 		else if ("fechar".equals(evento.getActionCommand()))
 			Comandos.fecharAplicacao();
 		else if ("tocar".equals(evento.getActionCommand()))
-			Comandos.tocarMusica();
+			try {
+				Comandos.tocarMusica();
+			}catch (MidiUnavailableException e){
+				e.printStackTrace();
+			}
 		else if ("pausar".equals(evento.getActionCommand()))
 			Comandos.pausarMusica();
 		else if ("parar".equals(evento.getActionCommand()))
