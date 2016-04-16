@@ -10,13 +10,11 @@ public class Principal implements Runnable{
 	static JFrame janelaPrincipal = null;
 	BarraDeMenu barraDeMenu = new BarraDeMenu();
 	AreaGrafica areaGrafica = new AreaGrafica();
-	static int inicioBarra = 0;
-	static int inicioSequenciador = 0;
 	static boolean tocando = false;
 	final static boolean executar = true;
-	static boolean EXECUTANDO_ECLIPSE = true;
+	static boolean EXECUTANDO_ECLIPSE = false;
 
-	public static void main(String[] args){
+	public static void main (String[] args){
 		Principal principal = new Principal();
         Thread     thread  = new Thread(principal);
         thread.start();
@@ -44,19 +42,20 @@ public class Principal implements Runnable{
 		System.gc();
 	}
 
-	public void run() {
+	public void run(){
 		while(executar){
 			if (tocando){
-					AreaGrafica.barraDeProgresso.setValue(inicioBarra);
-					Comandos.retardo(1000);
-					inicioBarra++;
+				AreaGrafica.posicaoBarraProgresso = Comandos.getPosicaoBarraProgresso();
+				AreaGrafica.barraDeProgresso.setValue(AreaGrafica.posicaoBarraProgresso);
+				Comandos.atualizarTempoProgresso();
+				Comandos.retardo (1000);
 			}else{
 				try{
-					Comandos.retardo(1000);                                 
+					Comandos.retardo (1000);                                 
 				}catch(Exception e) {
 					System.out.println(e.getMessage());  
                 }
-			}    
+			}  
 		}
 	}
 
