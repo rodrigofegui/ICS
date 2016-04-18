@@ -229,7 +229,12 @@ public class BarraDeMenu implements ActionListener{
 		else if ("voltar".equals(evento.getActionCommand()))
 			Comandos.voltarMusica();
 		else if ("avancar".equals(evento.getActionCommand()))
-			Comandos.avancarMusica();
+			try {
+				Comandos.avancarMusica();
+			} catch (MidiUnavailableException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		else if ("aumentar".equals(evento.getActionCommand()))
 			Comandos.aumentarVolume();
 		else if ("diminuir".equals(evento.getActionCommand()))

@@ -1,13 +1,21 @@
-/*	Pacote ao qual pertence */
+
 package interFace;
 
-/*	Importando APIs necessárias */
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.io.File;
+import java.nio.charset.StandardCharsets;
+import java.util.Vector;
 
+import javax.sound.midi.InvalidMidiDataException;
+import javax.sound.midi.MetaMessage;
+import javax.sound.midi.MidiEvent;
+import javax.sound.midi.MidiMessage;
 import javax.sound.midi.MidiUnavailableException;
+import javax.sound.midi.ShortMessage;
+import javax.sound.midi.Track;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -24,16 +32,16 @@ import javax.swing.table.DefaultTableModel;
 import controladorMidi.ControladorMidi2;
 
 public class Comandos {
-	//private static final java.lang.String newline = "\n";
+
 	
 	public static void abrirArquivo () throws MidiUnavailableException{
-		/*	Abrindo o selecionador de arquivos */
+		
 		JFileChooser seletorArquivo = new JFileChooser();
 		
-		/*	Inicializando no diretório corrente */
+		
 		seletorArquivo.setCurrentDirectory (new File("."));
 		
-		/*	Habilitando o filtro de arquivos */
+		
 		seletorArquivo.addChoosableFileFilter(new FiltroMidi());
 		seletorArquivo.setAcceptAllFileFilterUsed(true);
 		seletorArquivo.setFileFilter(new FiltroMidi());
@@ -53,14 +61,20 @@ public class Comandos {
 	}
 
 	public static void conteudoMidi (){
-		JFrame janelaDados = new JFrame("Conteúdo MIDI");
-		/*	Configurando o tamanho mínimo da janela */
-		janelaDados.setSize(new Dimension(840, 600));
-		/* Exibiç\u00e3o a interface */
+		
+		JFrame janelaDados = new JFrame("Conteúdo MIDI");		
+		janelaDados.setSize(new Dimension(840, 600));		
 		janelaDados.setVisible (true);
-		janelaDados.setResizable(false);
-		/*	Configurando para encerrar a janela ao sair, n\u00e3o a aplicaç\u00e3o */
+		janelaDados.setResizable(false);		
 		janelaDados.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		String trilhaTexto = null;
+		String tiqueString;
+		int n;
+	    String comandoString;
+	    String nomecomando;
+		String shortMessageString;
+		String operador1, operador2, operador3;
+		
 		
 		String[][] dados = {null}; 
 		String cabecalho[] = {"Trilha", "Instante (tiques)",
@@ -72,21 +86,70 @@ public class Comandos {
 		JTable tabelaDados = new JTable(modeloTabelaDados);
 		JScrollPane planoRolante = new JScrollPane(tabelaDados);
 		
-		/*	Configurando a largura das colunas */
+		
 		for (int col = 0; col < tamanho.length; col++){
 			tabelaDados.getColumnModel().getColumn(col).setPreferredWidth(tamanho[col]);
 			tabelaDados.getColumnModel().getColumn(col).setResizable(false);
 		}
 		
-		/*	Fixando as colunas */
-		tabelaDados.getTableHeader().setReorderingAllowed(false);
 		
-		/*	Adicionar nova linha */
-		modeloTabelaDados.addRow(new Object[]{null});
+		tabelaDados.getTableHeader().setReorderingAllowed(false);		
 		
-		/*	Desativando a edição da tabela */
-		tabelaDados.setEnabled(false);
-		/*	Adicionando plano rolante à janela */
+		//tem que adicionar os negocio aqui
+		
+		if(ControladorMidi2.sequencia != null){
+			Track[] trilhas = ControladorMidi2.sequencia.getTracks(); 
+			
+			for(int i=0; i<trilhas.length; i++){
+				
+				Track trilha = trilhas[i];				
+				try{
+	            	trilhaTexto =  getTexto(trilha);
+	             }catch(Exception e){}
+				
+				
+				for(int j=0; j<trilha.size(); j++){
+					MidiEvent e = trilha.get(j);
+					MidiMessage mensagem = e.getMessage();
+					
+					
+					byte a[] = mensagem.getMessage(); 
+					
+					operador1 = new String(a, StandardCharsets.UTF_8);
+					
+					long tique = e.getTick();
+					
+					tiqueString = Long.toString(tique);
+					
+					n = mensagem.getStatus();
+					
+					comandoString = Integer.toString(n);
+					
+		               
+		            nomecomando = ""+n;
+		               
+		            switch(n){
+		            	case 128: nomecomando = "note ON"; break;
+		                case 144: nomecomando = "note OFF"; break;
+		                case 255: nomecomando = "MetaMensagem  (a ser decodificada)"; break;
+		                case 192: nomecomando = "Program Change"; break;
+		                case 250: nomecomando = "Start"; break;
+		                case 252: nomecomando = "Stop"; break;
+		                case 176: nomecomando = "Control Change"; break;
+		            }
+					
+		            String  linhas[]  =  {trilhaTexto,tiqueString,ControladorMidi2.textoTempoAtual(),comandoString, operador1, " ", " ", nomecomando};		
+		    		modeloTabelaDados.addRow(linhas);
+		            
+				}
+				
+			}
+			
+		}	
+		
+		
+		
+		tabelaDados.setEnabled(false);	
 		janelaDados.add(planoRolante);
 	}
 
@@ -164,6 +227,7 @@ public class Comandos {
 	}
 	
 	public static void tocarMusica () throws MidiUnavailableException{
+
 		Principal.tocando = true;
 		
 		atualizarTempoProgresso();
@@ -173,9 +237,8 @@ public class Comandos {
 		AreaGrafica.botaoPausar.setVisible(true);
 		AreaGrafica.botaoParar.setEnabled(true);
 		
-		ControladorMidi2.tocarMidi();
+		ControladorMidi2.tocarMidi();		
 		
-		//System.out.println("Tocando = " + Principal.tocando);
 	}
 	
 	public static void pausarMusica (){
@@ -218,7 +281,7 @@ public class Comandos {
 		confProgressos(atual);
 	}
 	
-	public static void avancarMusica(){
+	public static void avancarMusica() throws MidiUnavailableException{
 		int atual = AreaGrafica.barraDeProgresso.getValue();
 		
 		atual++;
@@ -227,14 +290,22 @@ public class Comandos {
 			atual = AreaGrafica.barraDeProgresso.getMaximum();
 		
 		confProgressos(atual);
+		
+		long a = (long) atual;
+		
+		
+		ControladorMidi2.avancarMidi(a);
+		
+				
 	}
 	
 	public static void aumentarVolume() {
 		int atual = AreaGrafica.controleVolume.getValue();
 		
-		if (atual < AreaGrafica.controleVolume.getMaximum())
+		if (atual < AreaGrafica.controleVolume.getMaximum()){
 			AreaGrafica.controleVolume.setValue(atual + 1);
-		
+			 ControladorMidi2.mudaVolume(atual);
+		}
 		//System.out.println("aumentando volume...");
 		
 		controleVolume();
@@ -243,9 +314,10 @@ public class Comandos {
 	public static void diminuirVolume() {
 		int atual = AreaGrafica.controleVolume.getValue();
 		
-		if (atual > AreaGrafica.controleVolume.getMinimum())
+		if (atual > AreaGrafica.controleVolume.getMinimum()){
 			AreaGrafica.controleVolume.setValue(atual - 1);
-		
+			ControladorMidi2.mudaVolume(atual);
+		}
 		//System.out.println("diminuindo volume...");
 		controleVolume();
 	}
@@ -297,8 +369,7 @@ public class Comandos {
 	}
 	
 	private static String textoProgresso (){
-		String texto = ControladorMidi2.textoTempoAtual() + " / " + ControladorMidi2.textoDuracao;
-		
+		String texto = ControladorMidi2.textoTempoAtual() + " / " + ControladorMidi2.textoDuracao;		
 		return texto;
 	}
 	
@@ -316,6 +387,8 @@ public class Comandos {
 		AreaGrafica.barraDeProgresso.setValue(atual);
 		AreaGrafica.posicaoBarraProgresso = atual;
 		ControladorMidi2.posicaoSequenciador = setPosicaoBarraProgresso();
+		
+				
 	}
 	
   	public static void retardo (int miliseg){  
@@ -323,4 +396,29 @@ public class Comandos {
         	Thread.sleep(miliseg);
         }catch (InterruptedException e) { }
 	}
+  	
+  	
+  	
+  	 static String getTexto(Track trilha) throws InvalidMidiDataException{
+  		 
+  	    String stexto = "";
+
+  	    for(int i=0; i<trilha.size(); i++){
+  	    	MidiMessage m = trilha.get(i).getMessage();
+  	           
+  	    	if(((MetaMessage)m).getType() == 0x01){
+  	    		
+  	    		MetaMessage mm  = (MetaMessage)m;
+  	    		byte[]     data = mm.getData();
+
+  	    		for(int j=0; j<data.length; j++){
+  	    			stexto += (char)data[j];
+  	    		}         
+  	    	}       
+  	    }    
+  	  return stexto;
+  	 }
+  	
+  	
 }
+

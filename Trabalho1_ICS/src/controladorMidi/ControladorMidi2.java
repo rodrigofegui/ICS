@@ -12,6 +12,7 @@ import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.Receiver;
 import javax.sound.midi.Sequence;
 import javax.sound.midi.Sequencer;
+import javax.sound.midi.ShortMessage;
 
 public class ControladorMidi2 {
 	public static Sequencer sequenciador = null;
@@ -21,27 +22,38 @@ public class ControladorMidi2 {
 	public static long posicaoSequenciador = 0;
 	public static File arqMidi = null;
 	public static String textoDuracao = "", textoTempoAtual = "";
+	
+	public static void mudaVolume(int volume) {
+		ShortMessage mensagemVolume = new ShortMessage();
+		for(int i = 0; i<16; i++){
+			
+				try {
+					mensagemVolume.setMessage(ShortMessage.CONTROL_CHANGE,i,7,volume);
+					receptor.send(mensagemVolume, -1);
+				} catch (InvalidMidiDataException e) {
+					System.out.println(e);
+				}
+			
+		}
+		
+		
+	}
+	
 		
 	public static void iniciaSequenciador () throws MidiUnavailableException{
 		try{
-			/*	Inicializaçãoi da Sequência */
-			sequencia    = MidiSystem.getSequence(arqMidi);
-			/*	Inicializaçãoi do Sequenciador */
-			sequenciador = MidiSystem.getSequencer();
-	
-			/*	Configuração da sequência no Sequenciador */
-	        sequenciador.setSequence(sequencia);
-	        /*	Abertura do sequenciador */
-	        sequenciador.open();
-	        /*	Aguardar o hardware realizar as configurações */
-	        Comandos.retardo (500);
-	                    
+			
+			sequencia    = MidiSystem.getSequence(arqMidi);			
+			sequenciador = MidiSystem.getSequencer();				
+	        sequenciador.setSequence(sequencia);	        
+	        sequenciador.open();	        
+	        Comandos.retardo (500);       
+	        
+	        
             receptor = sequenciador.getTransmitters().iterator().next().getReceiver();
             sequenciador.getTransmitter().setReceiver(receptor);
-
-            /*	Configurando a duração do arquivo Midi */
-            duracao  = sequencia.getMicrosecondLength();
-            /*	Configurando da duração no formato de texto */
+            
+            duracao  = sequencia.getMicrosecondLength();            
             textoDuracao = formataInstante (duracao  / 1000000);
                                             	    
 		}catch (MidiUnavailableException e1){
@@ -54,13 +66,19 @@ public class ControladorMidi2 {
 	}
 	
 	public static void tocarMidi () throws MidiUnavailableException{
-		iniciaSequenciador ();
-		
-		sequenciador.setMicrosecondPosition(posicaoSequenciador);
-		
-		/*	Iniciar o sequenciador */
+		iniciaSequenciador ();		
+		sequenciador.setMicrosecondPosition(posicaoSequenciador);		
         sequenciador.start();
 	}
+	
+	public static void avancarMidi(long posicao) throws MidiUnavailableException{
+		sequenciador.stop();
+		iniciaSequenciador();
+		sequenciador.setMicrosecondPosition(posicao);
+		sequenciador.start();	
+		
+	}
+	
 	
 	public static void pausarMidi (){
 		posicaoSequenciador = sequenciador.getMicrosecondPosition();

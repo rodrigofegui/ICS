@@ -1,7 +1,5 @@
-/*	Pacote ao qual pertence */
 package interFace;
 
-/*	Importando APIs necessárias */
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -43,22 +41,12 @@ public class AreaGrafica implements ActionListener, ChangeListener{
 	static JSlider controleVolume = null;
 	
 	public JPanel criarPlanoDeConteudo() {
-		/*	Preparaç\u00e3o para o incremento das informações gráficas */
-		preparaPainelPrincipal();
 		
-		/*	Adicionando nome do arquivo */
-		addCaixaArquivo();
-		
-		/*	Preparando a barra de progresso */
-		preparaPainelProgresso ();
-		
-		/*	Adicionando a barra de progresso */
-		addBarraProgresso ();
-		
-		/*	Preparando os botoes */
-		preparaPainelBotes();
-		
-		/*	Adicionando os botoes */
+		preparaPainelPrincipal();		
+		addCaixaArquivo();		
+		preparaPainelProgresso ();		
+		addBarraProgresso ();		
+		preparaPainelBotes();		
 		addBotoes();
 		
 		return painelPrincipal;
@@ -128,25 +116,18 @@ public class AreaGrafica implements ActionListener, ChangeListener{
 	}
 	
 	private void addBotoes(){
-		botaoVoltar = criarBotao ("voltar", true, false);
 		
+		botaoVoltar = criarBotao ("voltar", true, false);		
 		botaoPausar = criarBotao ("pausar", true, false);
 		botaoPausar.setVisible(false);
-
-		botaoTocar = criarBotao ("tocar", true, false);
-		
+		botaoTocar = criarBotao ("tocar", true, false);		
 		botaoAvancar = criarBotao ("avancar", true, false);
-
-		botaoParar = criarBotao ("parar", true, false);
-		
+		botaoParar = criarBotao ("parar", true, false);		
 		addEspacoVazio (90);
 		
-		botaoVolume = criarVolume ("volume_médio");
-		
-		controleVolume = sliderVolume (0, 127, volumeInicial);
-		
-		textoVolume = criarTextoVolume ();
-		
+		botaoVolume = criarVolume ("volume_médio");		
+		controleVolume = sliderVolume (0, 127, volumeInicial);		
+		textoVolume = criarTextoVolume ();		
 		Comandos.controleVolume();
 	}
 	
@@ -185,38 +166,33 @@ public class AreaGrafica implements ActionListener, ChangeListener{
 		else
 			nomeIcone = "../Icones/" + descricao + ".png";
 		
-		/*	Aquisiç\u00e3o do icone */
-		icone = criarIcone(nomeIcone);
-		/*	Criando Bot\u00e3o de Tocar */
+		icone = criarIcone(nomeIcone);		
 		JButton novo = new JButton(icone);
-		/*	Redimensioar bot\u00e3o */
+		
 		if (descricao.equals("tocar") || descricao.equals("pausar"))
 			novo.setPreferredSize(new Dimension(43, 43));
 		else
 			novo.setPreferredSize(new Dimension(32, 32));
-		/*	Tirar borda */
-		novo.setBorderPainted(false);
-		/*	Tirar area pintada */
-		novo.setContentAreaFilled(false);
-		/*	Tirar destaque ao clicar */
-		//novo.setFocusPainted(false);
 		
-		if (acao){
-			/*	Identificaç\u00e3o da Aç\u00e3o a ser tomada */
-	        novo.setActionCommand(descricao);
-	        /*	Adicionando Aç\u00e3o ao botao */
+		novo.setBorderPainted(false);	
+		novo.setContentAreaFilled(false);
+		
+		
+		
+		if (acao){		
+	        novo.setActionCommand(descricao);	    
 			novo.addActionListener(this);
 		}
 		
-		/*	Desativado */
-		novo.setEnabled(ativacao);
-		/*	Adicionando ao painel */
+		
+		novo.setEnabled(ativacao);		
 		painelBotoes.add(novo);
 		
 		return novo;
 	}
 	
 	private JButton criarVolume (String descricao){
+
 		String nomeIcone;
 		if (Principal.EXECUTANDO_ECLIPSE)
 			nomeIcone = "Icones/" + descricao + ".png";
@@ -240,6 +216,7 @@ public class AreaGrafica implements ActionListener, ChangeListener{
 		
 		return novo;
 	}
+	
 	
 	private JSlider sliderVolume (int min, int max, int inicio){
 		/*	Criando Controle de volume por Slider */
@@ -299,8 +276,14 @@ public class AreaGrafica implements ActionListener, ChangeListener{
 		else if ("voltar".equals(evento.getActionCommand()))
 			Comandos.voltarMusica();
 		else if ("avancar".equals(evento.getActionCommand()))
-			Comandos.avancarMusica();
+			try {
+				Comandos.avancarMusica();
+			} catch (MidiUnavailableException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 	}
+	
 	
 	public void stateChanged(ChangeEvent event){
 		int atual = controleVolume.getValue();

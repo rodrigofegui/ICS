@@ -12,7 +12,7 @@ public class Principal implements Runnable{
 	AreaGrafica areaGrafica = new AreaGrafica();
 	static boolean tocando = false;
 	final static boolean executar = true;
-	static boolean EXECUTANDO_ECLIPSE = false;
+	static boolean EXECUTANDO_ECLIPSE = true;
 
 	public static void main (String[] args){
 		Principal principal = new Principal();
@@ -23,19 +23,12 @@ public class Principal implements Runnable{
 	
 	public Principal(){
 		System.gc();
-		/*	Criação da nova interface, com um título */
-		janelaPrincipal = new JFrame ("Tocador MIDI - H\u0026R");
-
-		/*	Adicionando componentes à janela */
+		
+		janelaPrincipal = new JFrame ("Tocador MIDI - H\u0026R");		
 		janelaPrincipal.setJMenuBar(barraDeMenu.criarBarraDeMenu());
-		janelaPrincipal.setContentPane (areaGrafica.criarPlanoDeConteudo());
-
-		/*	Configurando o tamanho mínimo da janela */
-		janelaPrincipal.setSize(new Dimension(550, 190));
-		/*	Desabilitando o redimensionamento da janela */
-		janelaPrincipal.setResizable(false);
-		//janelaPrincipal.pack ();
-		/* Exibição a interface */
+		janelaPrincipal.setContentPane (areaGrafica.criarPlanoDeConteudo());		
+		janelaPrincipal.setSize(new Dimension(550, 190));	
+		janelaPrincipal.setResizable(false);		
 		janelaPrincipal.setVisible (true);
 		janelaPrincipal.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
