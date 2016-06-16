@@ -1,6 +1,6 @@
 Enunciado:	
 
-Escreva um programa que: 
+Escreva um programa que:
 
 Converta arquivos Midi em programas Java equivalentes, os quais deverão fazer uso de classes do pacote sintese. 
 
@@ -24,5 +24,4 @@ Recomendação 2:  Conteúdo mínimo da interface gráfica:
 Recomendação 3:  Atualização: 
 1. Baixar o pacote sintese; 
 2. Consultar a documentação; 
-3. Consultar a Seção 17.11 
-     (Há alguns exemplos com a classe BancoDeInstrumentos). 
+3. Consultar a Seção 17.11 (Há alguns exemplos com a classe BancoDeInstrumentos). 
