@@ -128,6 +128,8 @@ public class InterfaceGrafica implements	ActionListener, ChangeListener, ItemLis
 		
 		janelaPrincipal.setContentPane (this.getPainelPrincipal());
 		
+		iniciarMelodias();
+		
 		janelaPrincipal.setSize (new Dimension (comprimentoMaximo, alturaMaxima));
 		
 		janelaPrincipal.setResizable (false);
@@ -149,6 +151,16 @@ public class InterfaceGrafica implements	ActionListener, ChangeListener, ItemLis
 	 */
 	public static void criarInterface (){
 		new InterfaceGrafica();
+	}
+	
+	/**
+	 * Inicialização das musicas já armazenadas antes da execucao do trabalho corrente
+	 */
+	private static void iniciarMelodias (){
+		conversao.ConversorMidiJava.criarConversorMidiJava ();
+		
+		for (int i = 0; i < conversao.ConversorMidiJava.melodiasRegistradasTratadas.size(); i++)
+			ControleComandos.adicionarMelodia (conversao.ConversorMidiJava.melodiasRegistradasTratadas.get(i));
 	}
 	
 	

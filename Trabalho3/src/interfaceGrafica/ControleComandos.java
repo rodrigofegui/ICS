@@ -59,7 +59,7 @@ public class ControleComandos {
 	private static boolean invertida = false;
 	static boolean editando = false;
 	private static boolean deslizando = false;
-	private static String dirBase = "Musicas/Wave/";
+	private static String dirBase = "musicas/Wave/";
 	static DecimalFormat formatoFloat = new DecimalFormat("0.00");
 	/**
 	 * Constantes necessarias
@@ -168,8 +168,10 @@ public class ControleComandos {
 		else if (indiceEscolhido < InterfaceGrafica.qntMelodiasIniciais)
 			melodiaEscolhida = melodias.Melodias.gerenciadorDefault(nome);
 		
-		else
+		else{
+			System.out.println("Abrindo melodia -> " + nome);
 			melodiaEscolhida = melodias.BaseadoMidi.gerenciador(nome);
+		}
 		
 		configurarInfosMelodias ();
 		
@@ -630,7 +632,7 @@ public class ControleComandos {
 	 */
 	public static void conteudoMidi (){
 		JFrame janelaDados = new JFrame("Conteúdo MIDI");
-		janelaDados.setSize(new Dimension(1000, 600));
+		janelaDados.setSize(new Dimension(1000, 400));
 		janelaDados.setVisible (true);
 		janelaDados.setResizable(false);
 		janelaDados.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -662,6 +664,8 @@ public class ControleComandos {
 			
 			indiceEscolhido = conversao.ConversorMidiJava.melodiasRegistradasTratadas.indexOf(nome);
 			nome = conversao.ConversorMidiJava.melodiasRegistradasAbsolutas.get(indiceEscolhido);
+			
+			System.out.println("pediu o arquivo -> " + nome);
 			
 			try{
 				File arqmidi = new File(nome);
@@ -772,7 +776,7 @@ public class ControleComandos {
 	 */
 	public static void conteudoJava (){
 		JFrame janelaJava = new JFrame("Conteúdo Java");
-		janelaJava.setSize(new Dimension(InterfaceGrafica.comprimentoMaximo, 800));
+		janelaJava.setSize(new Dimension(InterfaceGrafica.comprimentoMaximo, 500));
 		janelaJava.setVisible (true);
 		janelaJava.setResizable(false);
 		janelaJava.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -869,6 +873,18 @@ public class ControleComandos {
 			conversao.ConversorMidiJava.melodiasRegistradasAbsolutas.add(arq.getAbsolutePath());
 			
 			conversao.ConversorMidiJava.registrarMelodias(conversao.ConversorMidiJava.melodiasRegistradasAbsolutas, true);
+		}
+	}
+	
+	/**
+	 * Adicao da melodia extraida do arquivo midi no escopo da execucao
+	 * @param nome Nome da melodia
+	 */
+	public static void adicionarMelodia (String nome){
+		if (InterfaceGrafica.melodiasDisponiveis.indexOf(nome) == -1){
+			
+			InterfaceGrafica.melodiasDisponiveis.add(nome);
+			InterfaceGrafica.escolherMelodias.addItem(nome);
 		}
 	}
 

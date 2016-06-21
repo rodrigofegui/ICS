@@ -80,23 +80,4 @@ public class Principal {
 		
 		//*/
 	}
-
-	
-	private static void teste (){
-		try {
-			File arq = new File ("src/melodias/BaseadoMidi.java");
-			RandomAccessFile gravarArq = new RandomAccessFile (arq, "rw");
-			
-			gravarArq.seek (conversao.ConversorMidiJava.posicionarSeek(arq, "//"));
-			gravarArq.writeBytes("**\n");
-			
-			gravarArq.close();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
 }

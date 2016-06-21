@@ -40,6 +40,16 @@ public class ConversorMidiJava {
 	 * Arquivo que contem as conversoes de midi em Java
 	 */
 	public static final String nomeClasseCriada = "src/melodias/BaseadoMidi.java";
+	/**
+	 * Nome padrao para o arquivo das melodias ja registradas, com o
+	 * nome dos metodos
+	 */
+	public static String arqPadraoTratadas = "Default/melodiasRegistradasTratadas.txt";
+	/**
+	 * Nome padrao para o arquivo das melodias ja registradas, com o
+	 * o caminho abosuto do arquivo
+	 */
+	public static String arqPadraoAbsolutas = "Default/melodiasRegistradasAbsolutas.txt";
 	
 	/**
 	 * Arquivo midi, em si
@@ -47,7 +57,7 @@ public class ConversorMidiJava {
 	 * Nome bruto do arquivo
 	 * Nome tratado, utilizado como o nome de metodo
 	 * Notas escritas no arquivo
-	 * Nome padrao para o arquivo das melodias ja registradas
+	 * 
 	 * Arquivo virgem ou nao
 	 */
 	static File arqMidi = null;
@@ -55,8 +65,7 @@ public class ConversorMidiJava {
 	static String nomeArqMidi = "";
 	static String nomeArqMidiTratado = "";
 	static LinkedList<NotasMidi> notasLidas = new LinkedList<NotasMidi>();
-	static String arqPadraoTratadas = "Default/melodiasRegistradasTratadas.txt";
-	static String arqPadraoAbsolutas = "Default/melodiasRegistradasAbsolutas.txt";
+	
 	static boolean arqNovo = false;
 	/**
 	 * Maior amplitude possivel num arquivo midi
@@ -86,7 +95,8 @@ public class ConversorMidiJava {
 	 */
 	public ConversorMidiJava (String nome){
 		try {
-			new ConversorMidiJava();
+			if (melodiasRegistradasTratadas == null & melodiasRegistradasAbsolutas == null)
+				new ConversorMidiJava();
 			
 			nomeArqMidi = nome;
 			
@@ -112,7 +122,8 @@ public class ConversorMidiJava {
 	 */
 	public ConversorMidiJava (File arq){
 		try {
-			new ConversorMidiJava();
+			if (melodiasRegistradasTratadas == null & melodiasRegistradasAbsolutas == null)
+				new ConversorMidiJava();
 			
 			arqMidi = arq;
 			
@@ -129,6 +140,10 @@ public class ConversorMidiJava {
 			System.out.println (e1);
 
 		}
+	}
+	
+	public static void criarConversorMidiJava (){
+		new ConversorMidiJava();
 	}
 	
 	/**
@@ -303,7 +318,11 @@ public class ConversorMidiJava {
 					notasLidas.get(indice).setDuracao();
 				}
 			}
+		/* Sendo "programChange" */
+		}/*else if ((192 <= IdOperacao) & (IdOperacao <= 207)){
+			
 		}
+		//*/
 	}
 
 	/**
@@ -547,7 +566,7 @@ public class ConversorMidiJava {
 	 */
 	public static void escreverFuncaoPadrao (RandomAccessFile arquivo){
 		try {
-			arquivo.writeBytes ("\n\tpublic static Melodia padrao (String nome){\n");
+			arquivo.writeBytes ("\n\tpublic static Melodia gerenciador (String nome){\n");
 			
 			for (int indMelodia = 0; indMelodia < melodiasRegistradasTratadas.size(); indMelodia++){
 				if (indMelodia == 0)
